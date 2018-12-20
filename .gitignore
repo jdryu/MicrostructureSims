@@ -1,2 +1,8 @@
 
 .DS_Store
+*.xml
+*.iml
+*.xml
+*.pyc
+*.xml
+.idea/misc.xml
