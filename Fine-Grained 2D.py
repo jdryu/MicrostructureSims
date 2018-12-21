@@ -12,15 +12,18 @@ from Constants import *
 
 start = time.time()
 
+# cvs_res = int(input('Canvas resolution (in pixels)? '))
+# cvs_mag = int(input('Choose magnification: x20, x40, or x75? '))
 cvs_res = 1000
+cvs_mag = 40
 
 x = np.arange(0, cvs_res, 1)
 y = np.arange(0, cvs_res, 1)
 Xg, Yg = np.meshgrid(x, y, sparse=False)
 Vg = np.zeros((cvs_res, cvs_res))
 
-r_mean_px = calibrate(r_mean, 40, cvs_res)
-r_std_px = calibrate(r_std, 40, cvs_res)
+r_mean_px = calibrate(r_mean, cvs_mag, cvs_res)
+r_std_px = calibrate(r_std, cvs_mag, cvs_res)
 n = int((area_frac * cvs_res**2) / (math.pi * r_mean_px**2))
 print('Total number of grains:', n)
 m = 0
