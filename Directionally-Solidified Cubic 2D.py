@@ -24,7 +24,7 @@ Vg = np.zeros((cvs_res, cvs_res))
 
 sizeP_px = calibrate(sizeP, cvs_mag, cvs_res)
 sizeG_px = calibrate(sizeG, cvs_mag, cvs_res)
-sx2 = (2 * 0.4*sizeP_px / 2.35482)**2
+sx2 = (2 * 0.6*sizeP_px / 2.35482)**2
 sy2 = (2 * 0.1*sizeP_px / 2.35482)**2
 
 # defines allowed nucleation sites for grains
