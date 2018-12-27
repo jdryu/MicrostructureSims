@@ -23,7 +23,7 @@ def calibrate(r_um, mag, res):
 
 
 date = str(datetime.date.today())
-user_dir = os.getcwd() + "/TestFiles/"
+user_dir = os.getcwd() + "/Simulated Models/"
 
 r_mean = 189        # mean radius of equiaxed grains (approx as spheres)
 r_std = 70          # standard deviation of the radius of equiaxed grains
