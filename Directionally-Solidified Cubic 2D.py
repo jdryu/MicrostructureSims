@@ -24,7 +24,7 @@ Vg = np.zeros((cvs_res, cvs_res))
 
 sizeP_px = calibrate(sizeP, cvs_mag, cvs_res)
 sizeG_px = calibrate(sizeG, cvs_mag, cvs_res)
-sx2 = (2 * 0.6*sizeP_px / 2.35482)**2
+sx2 = (2 * 0.7*sizeP_px / 2.35482)**2
 sy2 = (2 * 0.1*sizeP_px / 2.35482)**2
 
 # defines allowed nucleation sites for grains
@@ -56,12 +56,6 @@ for pt in Ppoints:
 
     px = ax[midx]*((Xg-pt[0])**2) + 2*bx[midx]*(Xg-pt[0])*(Yg-pt[1]) + cx[midx]*((Yg-pt[1])**2)
     py = ay[midx]*((Xg-pt[0])**2) + 2*by[midx]*(Xg-pt[0])*(Yg-pt[1]) + cy[midx]*((Yg-pt[1])**2)
-
-    # band-aid for overflow error
-    # px = np.where(px > 100, 100, px)
-    # px = np.where(px < -100, -100, px)
-    # py = np.where(py > 100, 100, py)
-    # py = np.where(py < -100, -100, py)
 
     Vx = np.exp(-px)
     Vy = np.exp(-py)
