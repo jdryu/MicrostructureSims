@@ -24,8 +24,8 @@ Vg = np.zeros((cvs_res, cvs_res))
 
 sizeP_px = calibrate(sizeP, cvs_mag, cvs_res)
 sizeG_px = calibrate(sizeG, cvs_mag, cvs_res)
-cx = 2 * 0.4*sizeP_px / 2.35482
-cy = 2 * 0.1*sizeP_px / 2.35482
+sx2 = (2 * 0.4*sizeP_px / 2.35482)**2
+sy2 = (2 * 0.1*sizeP_px / 2.35482)**2
 
 # defines allowed nucleation sites for grains
 Gsite_x = np.arange(sizeG_px//2, cvs_res-sizeG_px//2, sizeG_px)
@@ -36,6 +36,15 @@ l, w = Gpoints.shape
 perturb = np.random.randn(l, w) * sizeG_px//4               # allows fluctuations around nucleation site to recover some randomness
 Gpoints = Gpoints + perturb
 
+# define properties for each grain
+theta = np.random.rand(l) * 2 * np.pi
+ax = np.cos(theta)**2 / (2 * sx2) + np.sin(theta)**2 / (2 * sy2)
+bx = -np.sin(2*theta) / (4 * sx2) + np.sin(2*theta) / (4 * sy2)
+cx = np.sin(theta)**2 / (2 * sx2) + np.cos(theta)**2 / (2 * sy2)
+ay = np.cos(theta)**2 / (2 * sy2) + np.sin(theta) ** 2 / (2 * sx2)
+by = -np.sin(2*theta) / (4 * sy2) + np.sin(2*theta) / (4 * sx2)
+cy = np.sin(theta)**2 / (2 * sy2) + np.cos(theta) ** 2 / (2 * sx2)
+
 # define nucleation sites for microstructure
 Psite_x = np.arange(sizeP_px//2, cvs_res, sizeP_px)
 Psite_y = np.arange(sizeP_px//2, cvs_res, sizeP_px)
@@ -44,17 +53,20 @@ Ppoints = np.column_stack((Xp.flat, Yp.flat))
 
 for pt in Ppoints:
     midx = sp.distance.cdist([pt], Gpoints).argmin()
-    # plt.plot(pt[0], pt[1], 'o', markersize=2, color=colorlist[midx%len(colorlist)])
-    Vx = np.exp(-(((Xg - pt[0]) ** 2) / (2 * (cx ** 2)) + ((Yg - pt[1]) ** 2) / (2 * (cy ** 2))))
-    Vy = np.exp(-(((Xg - pt[0]) ** 2) / (2 * (cy ** 2)) + ((Yg - pt[1]) ** 2) / (2 * (cx ** 2))))
+
+    px = ax[midx]*((Xg-pt[0])**2) + 2*bx[midx]*(Xg-pt[0])*(Yg-pt[1]) + cx[midx]*((Yg-pt[1])**2)
+    py = ay[midx]*((Xg-pt[0])**2) + 2*by[midx]*(Xg-pt[0])*(Yg-pt[1]) + cy[midx]*((Yg-pt[1])**2)
+
+    # band-aid for overflow error
+    # px = np.where(px > 100, 100, px)
+    # px = np.where(px < -100, -100, px)
+    # py = np.where(py > 100, 100, py)
+    # py = np.where(py < -100, -100, py)
+
+    Vx = np.exp(-px)
+    Vy = np.exp(-py)
     V_thresh = np.where(Vx+Vy >= 0.5, 1, 0)
     Vg += V_thresh
-
-
-# plt.plot(Gpoints[:, 0], Gpoints[:, 1], 'ko', markersize=5)
-# plt.axis([0, cvs_res, 0, cvs_res])
-# plt.show()
-
 
 Z = np.where(Vg >= 0.5, 1, 0)
 a_frac = np.sum(Z) / cvs_res**2

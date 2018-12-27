@@ -25,12 +25,11 @@ Vtest = np.zeros((cvs_res, cvs_res))
 tcount = 0
 a_prev = 0
 a_tot = 0
+m = 0
 
 r_mean_px = calibrate(r_mean, cvs_mag, cvs_res)
 r_std_px = calibrate(r_std, cvs_mag, cvs_res)
 overlap = 0.9               # defines percentage of the grain area not allowed to overlap with neighbouring grains
-n = int((area_frac * cvs_res**2) / (np.pi * r_mean_px**2))
-print('Total number of grains:', n)
 
 # defines allowed nucleation sites for grains, randomly picks the center of each circular grain from these
 site_x = np.arange(r_mean_px//2, cvs_res-r_mean_px//2, int(r_mean_px))
@@ -40,7 +39,7 @@ Xs, Ys = np.meshgrid(site_x, site_y, sparse=False)
 np.random.shuffle(Xs.flat)
 np.random.shuffle(Ys.flat)
 
-for m in range(n):
+while a_tot < area_frac * cvs_res**2:
     while True:
         r = rand.gauss(r_mean_px, r_std_px)
         c = 2 * r / 2.35482
@@ -68,7 +67,7 @@ for m in range(n):
             tcount += 1
 
     print('Drawing grain #' + str(m+1) + ' at point: (' + str(nuc_x) + ', ' + str(nuc_y) + ')')
-
+    m += 1
     Vg += V_thresh
     Vtest = Vg
     a_prev = a_tot
