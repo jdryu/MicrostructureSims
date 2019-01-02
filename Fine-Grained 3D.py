@@ -4,7 +4,7 @@ Doc string goes here ~ ~ ~
 
 import time
 import numpy as np
-import matplotlib.pyplot as plt
+from mayavi import mlab
 import random as rand
 from Constants import *
 
@@ -30,7 +30,7 @@ m = 0
 
 r_mean_px = calibrate(r_mean, cvs_mag, cvs_res)
 r_std_px = calibrate(r_std, cvs_mag, cvs_res)
-overlap = 0.9               # defines percentage of the sphere volume not allowed to overlap with neighbouring sphere
+overlap = 0.6               # defines percentage of the sphere volume not allowed to overlap with neighbouring sphere
 print('Approximate number of grains:', vol_frac*cvs_res**3//(4/3*np.pi * r_mean_px**3))
 
 # defines allowed nucleation sites for grains, randomly picks the center of each spherical grain from these
@@ -80,6 +80,7 @@ while v_tot < vol_frac * cvs_res**3:
     v_prev = v_tot
 
 W = np.where(Vg >= 0.5, 1, 0)
+np.save(name + '.npy', W)
 v_frac = np.sum(W) / cvs_res**3
 print('Volume fraction:', v_frac)
 
@@ -87,8 +88,6 @@ end = time.time()
 comp_time = end - start
 print('Total computation time (in seconds):', comp_time)
 
-plt.matshow(W, cmap="gray")
-plt.savefig(name + '.png')
-plt.show()
-
-np.save(name + '.npy', W)
+mlab.figure()
+mlab.contour3d(W)
+mlab.show()
