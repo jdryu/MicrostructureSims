@@ -68,7 +68,9 @@ while a_tot < area_frac * cvs_res**2:
 
     print('Drawing grain #' + str(m+1) + ' at point: (' + str(nuc_x) + ', ' + str(nuc_y) + ')')
     m += 1
-    Vg += V_thresh * rand.uniform(0.8, 1.2)
+    theta = rand.uniform(0.8, 1.2)
+    Vg += V_thresh * theta
+    Vg = np.where(Vg >= 1.2, theta, Vg)
     Vtest = Vg
     a_prev = np.sum(Vg)
 

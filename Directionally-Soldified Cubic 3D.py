@@ -78,5 +78,5 @@ end = time.time()
 comp_time = end - start
 print('Total computation time (in seconds):', comp_time)
 
-mlab.show()
+# mlab.show()
 mlab.savefig(name + '.png')
