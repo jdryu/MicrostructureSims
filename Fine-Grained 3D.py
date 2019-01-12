@@ -84,10 +84,11 @@ np.save(name + '.npy', W)
 v_frac = np.sum(W) / cvs_res**3
 print('Volume fraction:', v_frac)
 
+mlab.figure()
+mlab.contour3d(W)
+
 end = time.time()
 comp_time = end - start
 print('Total computation time (in seconds):', comp_time)
 
-mlab.figure()
-mlab.contour3d(W)
 mlab.show()

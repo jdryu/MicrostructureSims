@@ -68,11 +68,12 @@ while a_tot < area_frac * cvs_res**2:
 
     print('Drawing grain #' + str(m+1) + ' at point: (' + str(nuc_x) + ', ' + str(nuc_y) + ')')
     m += 1
-    Vg += V_thresh
+    Vg += V_thresh * rand.uniform(0.8, 1.2)
     Vtest = Vg
-    a_prev = a_tot
+    a_prev = np.sum(Vg)
 
-Z = np.where(Vg >= 0.5, 1, 0)
+Z = Vg
+np.save(name + '.npy', Z)
 a_frac = np.sum(Z) / cvs_res**2
 print('Area fraction:', a_frac)
 
@@ -83,5 +84,3 @@ print('Total computation time (in seconds):', comp_time)
 plt.matshow(Z, cmap="gray")
 plt.savefig(name + '.png')
 plt.show()
-
-np.save(name + '.npy', Z)

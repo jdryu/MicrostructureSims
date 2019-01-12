@@ -5,20 +5,21 @@ Doc string goes here ~ ~ ~
 import time
 import numpy as np
 import scipy.spatial as sp
-import matplotlib.pyplot as plt
+from mayavi import mlab
 from Constants import *
 
 start = time.time()
 
 # cvs_res = int(input('Canvas resolution (in pixels)? '))
 # cvs_mag = int(input('Choose magnification: x20, x40, or x75? '))
-cvs_res = 1000
+cvs_res = 500
 cvs_mag = 40
-name = user_dir + date + ' DSC 2D x' + str(cvs_mag)
+name = user_dir + date + ' DSC 3D x' + str(cvs_mag)
 
 # Initialising values
 x = np.arange(0, cvs_res, 1)
 y = np.arange(0, cvs_res, 1)
+z = np.arange(0, cvs_res, 1)
 Xg, Yg = np.meshgrid(x, y, sparse=False)
 Vg = np.zeros((cvs_res, cvs_res))
 
@@ -62,18 +63,20 @@ for pt in Ppoints:
 
     Vx = np.exp(-px)
     Vy = np.exp(-py)
-    # V_thresh = np.where(Vx+Vy >= 0.5, 1, 0)
     Vg += Vx + Vy
 
 Z = np.where(Vg >= 0.5, 1, 0)
-np.save(name + '.npy', Z)
-a_frac = np.sum(Z) / cvs_res**2
-print('Area fraction:', a_frac)
+W = np.repeat(Z[:, :, np.newaxis], cvs_res, axis=2)
+np.save(name + '.npy', W)
+v_frac = np.sum(W) / cvs_res**3
+print('Volume fraction:', v_frac)
+
+mlab.figure()
+mlab.contour3d(W)
 
 end = time.time()
 comp_time = end - start
 print('Total computation time (in seconds):', comp_time)
 
-plt.matshow(Z, cmap='gray')
-plt.savefig(name + '.png')
-plt.show()
+mlab.show()
+mlab.savefig(name + '.png')
